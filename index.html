@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Certificados SESCOOP/TO</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-wrap">
+<header class="app-header">
+<div class="app-title">
+<span class="eyebrow-pill">SESCOOP/TO • Certificação</span>
+<h1>Gerador de Certificados SESCOOP/TO</h1>
+<p>Monte certificados de frente e verso para todos os participantes e gere o PDF pelo navegador.</p>
+</div>
+<div class="row-actions" style="margin-top:0">
+<span class="badge-n" id="countBadge">0 participantes</span>
+<span class="badge-ok" id="statusBadge">Pronto para gerar</span>
+</div>
+</header>
+<div class="layout">
+<!-- ============ FORMULÁRIO ============ -->
+<section aria-label="Formulário">
+<div class="card-box">
+<h2>1. Lista de participantes</h2>
+<p class="sub">Envie uma planilha (.xlsx, .xls, .csv) ou um PDF com os nomes e CPFs. Os dados ficam apenas neste navegador.</p>
+<label class="upload-btn">
+<span>Escolher arquivo</span>
+<input type="file" id="fileList" accept=".xlsx,.xls,.csv,.pdf">
+</label>
+<div id="listInfo" class="sub" style="margin-top:10px">Nenhum arquivo carregado. Use os dados de exemplo ou envie uma lista.</div>
+<div id="xlsxMapping" style="display:none; margin-top:12px" class="grid2">
+<div class="fld">
+<label for="colNome">Coluna de NOMES</label>
+<select id="colNome"></select>
+<span class="hint">Coluna com o nome completo do participante.</span>
+</div>
+<div class="fld">
+<label for="colCpf">Coluna de CPF</label>
+<select id="colCpf"></select>
+<span class="hint">O CPF é lido, mas não aparece no certificado.</span>
+</div>
+<div class="fld span2">
+<label for="colInst">Coluna de instituição / empresa (opcional)</label>
+<select id="colInst"></select>
+<span class="hint">Se existir, cada participante recebe a sua própria instituição.</span>
+</div>
+<div class="span2 row-actions">
+<button type="button" class="btn-s" id="btnApplyMapping">Aplicar colunas</button>
+</div>
+</div>
+<div id="pdfInfo" style="display:none; margin-top:12px">
+<p class="sub">O PDF é exibido abaixo para conferência. A extração de texto não é feita na página: revise e cadastre os nomes manualmente na tabela.</p>
+<iframe id="pdfFrame" title="Visualização da lista em PDF" style="width:100%; height:260px; border:1px solid #c9d3e2; border-radius:8px"></iframe>
+</div>
+<div style="margin-top:14px">
+<div class="row-actions" style="margin-top:0; justify-content:space-between; align-items:center">
+<strong style="font-size:0.9rem">Pré-visualização da lista (editável)</strong>
+<button type="button" class="btn-ghost" id="btnAddRow">+ Adicionar participante</button>
+</div>
+<div style="overflow:auto; max-height:260px; margin-top:8px">
+<table class="pv">
+<thead><tr><th>Nome</th><th>CPF</th><th>Instituição</th><th></th></tr></thead>
+<tbody id="listBody"></tbody>
+</table>
+</div>
+<p class="sub" style="margin-top:8px">Remova linhas inválidas antes de gerar. Participantes sem nome são ignorados.</p>
+</div>
+</div>
+<div class="card-box">
+<h2>2. Dados do curso</h2>
+<p class="sub">Preencha as informações que aparecem no certificado. Campos vazios são omitidos do texto.</p>
+<div class="grid2">
+<div class="fld span2">
+<label for="curso">Nome do curso</label>
+<input id="curso" type="text" value="Cooperativismo e Gestão de Cooperativas Rurais">
+</div>
+<div class="fld">
+<label for="datas">Datas de realização</label>
+<input id="datas" type="text" value="28/09/2026 a 02/10/2026">
+<span class="hint">Ex.: 28/09/2026 a 02/10/2026</span>
+</div>
+<div class="fld">
+<label for="ch">Carga horária (horas)</label>
+<input id="ch" type="number" min="1" value="40">
+</div>
+<div class="fld">
+<label for="local">Cidade de realização</label>
+<input id="local" type="text" value="Palmas">
+</div>
+<div class="fld">
+<label for="dataEmissao">Data de emissão</label>
+<input id="dataEmissao" type="date">
+<span class="hint">Padrão: data de hoje.</span>
+</div>
+<div class="fld">
+<label for="instPart">Instituição do participante</label>
+<input id="instPart" type="text" placeholder="Digite a instituição do participante">
+<span class="hint">Aparece no texto do certificado. Vazio por padrão.</span>
+</div>
+<div class="fld">
+<label for="cnpjPart">CNPJ da instituição do participante</label>
+<input id="cnpjPart" type="text" placeholder="00.000.000/0000-00" maxlength="18">
+</div>
+<div class="fld">
+<label for="instReal">Instituição realizadora</label>
+<input id="instReal" type="text" placeholder="Digite a instituição realizadora">
+<span class="hint">Campo manual, vazio por padrão.</span>
+</div>
+<div class="fld">
+<label for="cnpjReal">CNPJ da instituição realizadora</label>
+<input id="cnpjReal" type="text" placeholder="00.000.000/0000-00" maxlength="18">
+</div>
+<div class="fld span2">
+<label for="apoio">Texto de apoio (rodapé)</label>
+<input id="apoio" type="text" value="Apoio: Serviço Nacional de Aprendizagem do Cooperativismo no Estado do Tocantins – SESCOOP/TO">
+</div>
+<div class="fld span2">
+<label for="teorico">Conteúdo Teórico</label>
+<textarea id="teorico">Princípios e valores do cooperativismo
+Histórico do cooperativismo no Brasil e no Tocantins
+Legislação cooperativista (Lei 5.764/71)
+Governança e gestão democrática
+Planejamento estratégico em cooperativas</textarea>
+<span class="hint">Um item por linha. Os itens são numerados automaticamente no verso.</span>
+</div>
+<div class="fld span2">
+<label for="pratico">Conteúdo Prático</label>
+<textarea id="pratico">Simulação de assembleia geral
+Elaboração de plano de negócios cooperativo
+Análise de demonstrações contábeis simplificadas</textarea>
+<span class="hint">Um item por linha.</span>
+</div>
+<div class="fld">
+<label>Logo da instituição</label>
+<label class="upload-btn"><span>Enviar logo</span><input type="file" id="fileLogo" accept="image/*"></label>
+<span class="hint" id="logoName">Nenhuma logo enviada.</span>
+</div>
+</div>
+</div>
+<div class="card-box">
+<h2>Instrutor e Responsável Técnico</h2>
+<p class="sub">Assinaturas são exibidas como imagem acima da linha de cada signatário.</p>
+<div class="grid2">
+<div class="fld span2">
+<label for="instrutor">Nome do instrutor</label>
+<input id="instrutor" type="text" value="Marcelo Tavares Duarte">
+</div>
+<div class="fld">
+<label for="rtNome">Nome do responsável técnico</label>
+<input id="rtNome" type="text" value="Patrícia Lemos Viana">
+</div>
+<div class="fld">
+<label for="rtCargo">Cargo do responsável técnico</label>
+<input id="rtCargo" type="text" value="Gerente de Formação">
+</div>
+<div class="fld">
+<label for="rtReg">Registro do responsável técnico</label>
+<input id="rtReg" type="text" value="CRA-TO 4521">
+</div>
+<div class="fld">
+<label>Assinatura do instrutor</label>
+<label class="upload-btn"><span>Enviar assinatura</span><input type="file" id="fileSigInst" accept="image/*"></label>
+<span class="hint" id="sigInstName">Sem imagem: apenas a linha.</span>
+</div>
+<div class="fld">
+<label>Assinatura do responsável técnico</label>
+<label class="upload-btn"><span>Enviar assinatura</span><input type="file" id="fileSigRt" accept="image/*"></label>
+<span class="hint" id="sigRtName">Sem imagem: apenas a linha.</span>
+</div>
+</div>
+</div>
+<div class="card-box">
+<h2>3. Ações e impressão</h2>
+<p class="sub">Gere os certificados e salve como PDF pelo diálogo de impressão do navegador.</p>
+<div class="row-actions">
+<button type="button" class="btn-p" id="btnPrintAll">Imprimir / Salvar todos em PDF (navegador)</button>
+<button type="button" class="btn-s" id="btnPrintPreview">Imprimir apenas o preview</button>
+<button type="button" class="btn-s" id="btnCopySummary">Copiar resumo</button>
+<button type="button" class="btn-s" id="btnResetForm">Restaurar exemplo</button>
+</div>
+<div class="notice">No diálogo de impressão, escolha "Salvar como PDF", orientação paisagem e ative "Gráficos de segundo plano".</div>
+</div>
+</section>
+<!-- ============ PREVIEW ============ -->
+<section class="preview-col" aria-label="Pré-visualização do certificado">
+<div class="card-box">
+<div class="preview-tools">
+<div>
+<h2 style="margin:0; font-size:1.05rem; color:#0f2a55">Pré-visualização</h2>
+<p class="sub" style="margin:2px 0 0">Participante atual: <strong id="pvName">—</strong></p>
+</div>
+<div class="row-actions" style="margin-top:0; align-items:center">
+<div class="face-toggle" role="group" aria-label="Face do certificado">
+<button type="button" id="btnFront" class="on">FRENTE</button>
+<button type="button" id="btnBack">VERSO</button>
+</div>
+<div class="zoom-ctrl">
+<button type="button" id="btnZoomOut" aria-label="Diminuir zoom">−</button>
+<span id="zoomLabel" style="font-size:0.82rem; min-width:44px; text-align:center">100%</span>
+<button type="button" id="btnZoomIn" aria-label="Aumentar zoom">+</button>
+<button type="button" id="btnFit" class="btn-fit" aria-label="Ajustar ao contêiner">Ajustar</button>
+</div>
+</div>
+</div>
+<div class="row-actions" style="margin:0 0 12px; align-items:center">
+<button type="button" class="btn-ghost" id="btnPrevP" aria-label="Participante anterior">‹ Anterior</button>
+<span id="pvIndex" class="badge-n">0 / 0</span>
+<button type="button" class="btn-ghost" id="btnNextP" aria-label="Próximo participante">Próximo ›</button>
+<span class="sub" style="margin:0 0 0 auto">Certificados prontos: <strong id="readyCount">0</strong></span>
+</div>
+<div class="pv-stage">
+<div class="pv-scale" id="pvScale">
+<div id="pvHost"></div>
+</div>
+</div>
+<div class="check-row" style="margin-top:12px">
+<input type="checkbox" id="chkVerso" checked>
+<label for="chkVerso">Exibir nota "Conteúdo programático no verso" na frente</label>
+</div>
+</div>
+<div class="card-box">
+<h2>Resumo do lote</h2>
+<p class="sub">Indicadores atualizados conforme você edita os dados.</p>
+<div class="grid2">
+<div><div id="kpiPart" style="font-size:1.5rem;font-weight:700;color:#1e4f9c">0</div><div class="sub" style="margin:0">participantes com nome</div></div>
+<div><div id="kpiCH" style="font-size:1.5rem;font-weight:700;color:#1e4f9c">40 h</div><div class="sub" style="margin:0">carga horária por certificado</div></div>
+<div><div id="kpiItens" style="font-size:1.5rem;font-weight:700;color:#1e4f9c">0</div><div class="sub" style="margin:0">itens de conteúdo programático</div></div>
+<div><div id="kpiPaginas" style="font-size:1.5rem;font-weight:700;color:#1e4f9c">0</div><div class="sub" style="margin:0">páginas no PDF final (frente + verso)</div></div>
+</div>
+</div>
+</section>
+</div>
+<footer class="shell-footer" style="margin-top:20px; text-align:center; font-size:0.8rem; color:#5b6777">
+SESCOOP/TO • Gerador de certificados • Processamento 100% local no navegador
+</footer>
+</div>
+<!-- Hidden offscreen container for printing -->
+<div id="printStage" style="display:none"></div>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="avisos.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
