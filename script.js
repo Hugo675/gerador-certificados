@@ -3,10 +3,8 @@
 // ---------- Estado ----------
 var state = {
 participants: [
-{ nome: "Ana Paula Ribeiro Souza", cpf: "12345678901", inst: "COOPERATIVA FRISIA", cnpj: "" },
-{ nome: "Carlos Eduardo Lima", cpf: "98765432100", inst: "COOPERATIVA FRISIA", cnpj: "" },
-{ nome: "Fernanda Oliveira Costa", cpf: "45678912300", inst: "", cnpj: "" },
-{ nome: "José Roberto Almeida", cpf: "32165498700", inst: "", cnpj: "" }
+{ nome: "Fulano de Tal1", cpf: "12345678901", inst: "COOPERATIVA A", cnpj: "" },
+{ nome: "Fulana de Tal2", cpf: "98765432100", inst: "COOPERATIVA B", cnpj: "" }
 ],
 idx: 0,
 face: "front",
