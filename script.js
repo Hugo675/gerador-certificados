@@ -3,8 +3,7 @@
 // ---------- Estado ----------
 var state = {
 participants: [
-{ nome: "Fulano de Tal1", cpf: "12345678901", inst: "COOPERATIVA A", cnpj: "" },
-{ nome: "Fulana de Tal2", cpf: "98765432100", inst: "COOPERATIVA B", cnpj: "" }
+{ nome: "Fulano de tal", cpf: "12345678901", inst: "COOPERATIVA A", cnpj: "" }
 ],
 idx: 0,
 face: "front",
@@ -15,26 +14,6 @@ sigRt: "",
 xlsxRows: null,
 xlsxHeader: []
 };
-
-// ---------- Logo padrão (carregada da pasta img) ----------
-var DEFAULT_LOGO_PATH = "img/logoSescoop.png"; // ajuste para o nome EXATO do arquivo na sua pasta img
-fetch(DEFAULT_LOGO_PATH)
-  .then(function (r) { return r.ok ? r.blob() : null; })
-  .then(function (b) {
-    if (!b) return;
-    var fr = new FileReader();
-    fr.onload = function (e) {
-      if (!state.logo) {
-        state.logo = e.target.result;
-        var ln = $("logoName");
-        if (ln) ln.textContent = "Logo padrão SESCOOP carregada automaticamente.";
-        refresh();
-      }
-    };
-    fr.readAsDataURL(b);
-  })
-  .catch(function () { /* sem logo padrão, segue manual */ });
-
 var PT_MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 // ---------- Utilitários ----------
 function $(id) { return document.getElementById(id); }
@@ -104,6 +83,26 @@ rtCargo: $("rtCargo").value.trim(),
 rtReg: $("rtReg").value.trim()
 };
 }
+// ---------- AJUSTE 1: Logo padrão (carregada da pasta img) ----------
+var DEFAULT_LOGO_PATH = "img/logo-sescoop.png"; // ajuste para o nome EXATO do arquivo na sua pasta img
+fetch(DEFAULT_LOGO_PATH)
+  .then(function (r) { return r.ok ? r.blob() : null; })
+  .then(function (b) {
+    if (!b) return;
+    var fr = new FileReader();
+    fr.onload = function (e) {
+      if (!state.logo) {
+        state.logo = e.target.result;
+        var ln = $("logoName");
+        if (ln) ln.textContent = "Logo padrão SESCOOP carregada automaticamente.";
+        var btn = $("btnRmLogo");
+        if (btn) btn.style.display = "";
+        refresh();
+      }
+    };
+    fr.readAsDataURL(b);
+  })
+  .catch(function () { /* sem logo padrão, segue manual */ });
 // ---------- Texto do certificado ----------
 function resolveInst(p, f) {
 return {
@@ -114,6 +113,7 @@ cnpj: String(p.cnpj || "").trim() || f.cnpjPart
 function buildParagraph(p, f) {
 var r = resolveInst(p, f);
 var s = "Certificamos que <span class=\"nm\">" + esc(p.nome) + "</span>";
+// AJUSTE 2: CPF do participante no texto
 if (p.cpf) s += ", inscrito no CPF " + esc(formatCpf(p.cpf));
 if (r.inst) s += ", colaborador da " + esc(r.inst) + (r.cnpj ? ", inscrita no CNPJ sob o número " + esc(r.cnpj) : "");
 s += ", participou do curso";
@@ -382,13 +382,14 @@ else toast("Formato não suportado.", "error");
 });
 $("btnApplyMapping").addEventListener("click", applyMapping);
 $("listBody").addEventListener("keydown", function () {});
-// ---------- Logo / assinaturas ----------
+// ---------- Logo / assinaturas (uploads) ----------
 $("fileLogo").addEventListener("change", function (e) {
 var f = e.target.files && e.target.files[0];
 if (!f) return;
 readFileDataURL(f, function (u) {
 state.logo = u;
 $("logoName").textContent = f.name;
+$("btnRmLogo").style.display = "";
 refresh();
 toast("Logo carregada.");
 });
@@ -399,6 +400,7 @@ if (!f) return;
 readFileDataURL(f, function (u) {
 state.sigInst = u;
 $("sigInstName").textContent = f.name;
+$("btnRmSigInst").style.display = "";
 refresh();
 toast("Assinatura do instrutor carregada.");
 });
@@ -409,9 +411,35 @@ if (!f) return;
 readFileDataURL(f, function (u) {
 state.sigRt = u;
 $("sigRtName").textContent = f.name;
+$("btnRmSigRt").style.display = "";
 refresh();
 toast("Assinatura do responsável técnico carregada.");
 });
+});
+// ---------- AJUSTE 3: Excluir logo e assinaturas ----------
+$("btnRmLogo").addEventListener("click", function () {
+state.logo = "";
+$("fileLogo").value = "";
+$("logoName").textContent = "Nenhuma logo enviada.";
+$("btnRmLogo").style.display = "none";
+refresh();
+toast("Logo removida.");
+});
+$("btnRmSigInst").addEventListener("click", function () {
+state.sigInst = "";
+$("fileSigInst").value = "";
+$("sigInstName").textContent = "Sem imagem: apenas a linha.";
+$("btnRmSigInst").style.display = "none";
+refresh();
+toast("Assinatura do instrutor removida.");
+});
+$("btnRmSigRt").addEventListener("click", function () {
+state.sigRt = "";
+$("fileSigRt").value = "";
+$("sigRtName").textContent = "Sem imagem: apenas a linha.";
+$("btnRmSigRt").style.display = "none";
+refresh();
+toast("Assinatura do responsável técnico removida.");
 });
 // ---------- Máscaras ----------
 ["cnpjPart","cnpjReal"].forEach(function (id) {
@@ -568,10 +596,10 @@ toast("Cópia não suportada neste navegador.", "error");
 }
 });
 $("btnResetForm").addEventListener("click", function () {
-$("curso").value = "Cooperativismo e Gestão de Cooperativas Rurais";
-$("datas").value = "28/09/2026 a 02/10/2026";
-$("ch").value = "40";
-$("local").value = "Palmas";
+$("curso").value = "";
+$("datas").value = "";
+$("ch").value = "";
+$("local").value = "";
 $("dataEmissao").value = todayISO();
 $("instPart").value = "";
 $("cnpjPart").value = "";

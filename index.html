@@ -76,20 +76,20 @@
 <div class="grid2">
 <div class="fld span2">
 <label for="curso">Nome do curso</label>
-<input id="curso" type="text" value="Cooperativismo e Gestão de Cooperativas Rurais">
+<input id="curso" type="text" value="">
 </div>
 <div class="fld">
 <label for="datas">Datas de realização</label>
-<input id="datas" type="text" value="28/09/2026 a 02/10/2026">
+<input id="datas" type="text" value="">
 <span class="hint">Ex.: 28/09/2026 a 02/10/2026</span>
 </div>
 <div class="fld">
 <label for="ch">Carga horária (horas)</label>
-<input id="ch" type="number" min="1" value="40">
+<input id="ch" type="number" min="1" value="">
 </div>
 <div class="fld">
 <label for="local">Cidade de realização</label>
-<input id="local" type="text" value="Palmas">
+<input id="local" type="text" value="">
 </div>
 <div class="fld">
 <label for="dataEmissao">Data de emissão</label>
@@ -136,7 +136,10 @@ Análise de demonstrações contábeis simplificadas</textarea>
 </div>
 <div class="fld">
 <label>Logo da instituição</label>
+<div class="upload-row">
 <label class="upload-btn"><span>Enviar logo</span><input type="file" id="fileLogo" accept="image/*"></label>
+<button type="button" class="btn-ghost btn-rm-img" id="btnRmLogo" style="display:none">✕ Excluir</button>
+</div>
 <span class="hint" id="logoName">Nenhuma logo enviada.</span>
 </div>
 </div>
@@ -147,28 +150,34 @@ Análise de demonstrações contábeis simplificadas</textarea>
 <div class="grid2">
 <div class="fld span2">
 <label for="instrutor">Nome do instrutor</label>
-<input id="instrutor" type="text" value="Marcelo Tavares Duarte">
+<input id="instrutor" type="text" value="">
 </div>
 <div class="fld">
 <label for="rtNome">Nome do responsável técnico</label>
-<input id="rtNome" type="text" value="Patrícia Lemos Viana">
+<input id="rtNome" type="text" value="">
 </div>
 <div class="fld">
 <label for="rtCargo">Cargo do responsável técnico</label>
-<input id="rtCargo" type="text" value="Gerente de Formação">
+<input id="rtCargo" type="text" value="">
 </div>
 <div class="fld">
 <label for="rtReg">Registro do responsável técnico</label>
-<input id="rtReg" type="text" value="CRA-TO 4521">
+<input id="rtReg" type="text" value="">
 </div>
 <div class="fld">
 <label>Assinatura do instrutor</label>
+<div class="upload-row">
 <label class="upload-btn"><span>Enviar assinatura</span><input type="file" id="fileSigInst" accept="image/*"></label>
+<button type="button" class="btn-ghost btn-rm-img" id="btnRmSigInst" style="display:none">✕ Excluir</button>
+</div>
 <span class="hint" id="sigInstName">Sem imagem: apenas a linha.</span>
 </div>
 <div class="fld">
 <label>Assinatura do responsável técnico</label>
+<div class="upload-row">
 <label class="upload-btn"><span>Enviar assinatura</span><input type="file" id="fileSigRt" accept="image/*"></label>
+<button type="button" class="btn-ghost btn-rm-img" id="btnRmSigRt" style="display:none">✕ Excluir</button>
+</div>
 <span class="hint" id="sigRtName">Sem imagem: apenas a linha.</span>
 </div>
 </div>
