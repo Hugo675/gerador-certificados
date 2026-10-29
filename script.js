@@ -94,6 +94,7 @@ cnpj: String(p.cnpj || "").trim() || f.cnpjPart
 function buildParagraph(p, f) {
 var r = resolveInst(p, f);
 var s = "Certificamos que <span class=\"nm\">" + esc(p.nome) + "</span>";
+if (p.cpf) s += ", inscrito no CPF " + esc(formatCpf(p.cpf));
 if (r.inst) s += ", colaborador da " + esc(r.inst) + (r.cnpj ? ", inscrita no CNPJ sob o número " + esc(r.cnpj) : "");
 s += ", participou do curso";
 if (f.curso) s += " de " + esc(f.curso);
