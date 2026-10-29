@@ -15,6 +15,26 @@ sigRt: "",
 xlsxRows: null,
 xlsxHeader: []
 };
+
+// ---------- Logo padrão (carregada da pasta img) ----------
+var DEFAULT_LOGO_PATH = "img/logoSescoop.png"; // ajuste para o nome EXATO do arquivo na sua pasta img
+fetch(DEFAULT_LOGO_PATH)
+  .then(function (r) { return r.ok ? r.blob() : null; })
+  .then(function (b) {
+    if (!b) return;
+    var fr = new FileReader();
+    fr.onload = function (e) {
+      if (!state.logo) {
+        state.logo = e.target.result;
+        var ln = $("logoName");
+        if (ln) ln.textContent = "Logo padrão SESCOOP carregada automaticamente.";
+        refresh();
+      }
+    };
+    fr.readAsDataURL(b);
+  })
+  .catch(function () { /* sem logo padrão, segue manual */ });
+
 var PT_MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 // ---------- Utilitários ----------
 function $(id) { return document.getElementById(id); }
